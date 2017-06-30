@@ -1,2 +1,2 @@
 # jwtviewer
-JWT Viewer
+WPF based JWT Viewer.
