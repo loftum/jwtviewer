@@ -29,6 +29,8 @@ namespace JwtViewer
         {
             var settings = new WindowSettings
             {
+                Top = Top,
+                Left = Left,
                 Height = Height,
                 Width = Width
             };
@@ -42,6 +44,8 @@ namespace JwtViewer
     {
         public double Height { get; set; }
         public double Width { get; set; }
+        public double Left { get; set; }
+        public double Top { get; set; }
 
         public WindowSettings()
         {

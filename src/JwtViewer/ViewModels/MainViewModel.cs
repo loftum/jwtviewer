@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using JwtViewer.Annotations;
 using JwtViewer.Core;
 using JwtViewer.IO;
 
@@ -57,15 +53,9 @@ namespace JwtViewer.ViewModels
 
         public MainViewModel()
         {
-            Authorities = new List<string>
-            {
-                "hansolav-innlogging.dev.nrk.no",
-                "test-innlogging.nrk.no",
-                "stage-innlogging.nrk.no",
-                "preprod-innlogging.nrk.no",
-                "innlogging.nrk.no"
-            };
-            Authority = Authorities.First();
+            var settings = _fileManager.LoadJson<Settings>() ?? new Settings();
+            Authorities = settings.Authorities;
+            Authority = settings.Authorities.FirstOrDefault();
             Jwt = new JwtViewModel();
         }
 
@@ -81,7 +71,7 @@ namespace JwtViewer.ViewModels
         public void Load()
         {
             var data = _fileManager.LoadJson<TempData>() ?? new TempData();
-            Authority = data.Authority ?? Authorities.First();
+            Authority = data.Authority ?? Authorities.FirstOrDefault();
             Raw = data.Raw;
         }
     }

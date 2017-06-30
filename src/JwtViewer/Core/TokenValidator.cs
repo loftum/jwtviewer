@@ -56,9 +56,16 @@ namespace JwtViewer.Core
 
         public static TokenValidator For(string authority)
         {
-            var config = FromFile(authority) ?? FetchAndStore(authority);
-            var keys = ((JArray) config["keys"]).Select(c => new Jwks(c)).ToList();
-            return new TokenValidator(keys);
+            try
+            {
+                var config = FromFile(authority) ?? FetchAndStore(authority);
+                var keys = ((JArray)config["keys"]).Select(c => new Jwks(c)).ToList();
+                return new TokenValidator(keys);
+            }
+            catch 
+            {
+                return new TokenValidator(new List<Jwks>());
+            }
         }
 
         private static JObject FetchAndStore(string authority)

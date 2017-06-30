@@ -65,6 +65,7 @@
     <Compile Include="Core\TokenValidator.cs" />
     <Compile Include="Core\Utc.cs" />
     <Compile Include="IO\FileManager.cs" />
+    <Compile Include="IO\Settings.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Syntax\JwtSyntaxParser.cs" />
     <Compile Include="ViewModels\JwtViewModel.cs" />
