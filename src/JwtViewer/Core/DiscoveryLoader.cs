@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
 namespace JwtViewer.Core
@@ -16,14 +17,14 @@ namespace JwtViewer.Core
             }
         }
 
-        public static JObject Load(string authority)
+        public static async Task<JObject> LoadConfigurationAsync(string authority)
         {
-            return FromFile(authority) ?? Refresh(authority);
+            return await FromFile(authority) ?? await RefreshConfigurationAsync(authority);
         }
 
-        public static JObject Refresh(string authority)
+        public static Task<JObject> RefreshConfigurationAsync(string authority)
         {
-            var config = Fetch(authority);
+            var config = FromInternet(authority);
             Store(config, authority);
             return config;
         }
@@ -39,20 +40,20 @@ namespace JwtViewer.Core
             File.WriteAllText(path, config.ToString());
         }
 
-        private static JObject Fetch(string authority)
+        private static async Task<JObject> FromInternet(string authority)
         {
             var config = new JObject
             {
-                ["openid-configuration"] = Request($"https://{authority}/core/.well-known/openid-configuration"),
-                ["jwks"] = Request($"https://{authority}/core/.well-known/jwks")
+                ["openid-configuration"] = await Request($"https://{authority}/.well-known/openid-configuration"),
+                ["jwks"] = await Request($"https://{authority}/.well-known/jwks")
             };
             return config;
         }
 
-        private static JObject Request(string url)
+        private static async Task<JObject> Request(string url)
         {
             var request = WebRequest.CreateHttp(url);
-            using (var response = request.GetResponse())
+            using (var response = await request.GetResponseAsync())
             {
                 using (var stream = response.GetResponseStream())
                 {
@@ -62,14 +63,14 @@ namespace JwtViewer.Core
                     }
                     using (var reader = new StreamReader(stream))
                     {
-                        var content = reader.ReadToEnd();
+                        var content = await reader.ReadToEndAsync();
                         return JObject.Parse(content);
                     }
                 }
             }
         }
 
-        private static JObject FromFile(string authority)
+        private static async Task<JObject> FromFile(string authority)
         {
             var path = Path.Combine(FilePath, authority, "discovery.json");
             if (!File.Exists(path))
@@ -80,7 +81,7 @@ namespace JwtViewer.Core
             {
                 using (var reader = new StreamReader(stream))
                 {
-                    var content = reader.ReadToEnd();
+                    var content = await reader.ReadToEndAsync();
                     return JObject.Parse(content);
                 }
             }

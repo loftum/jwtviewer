@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using JwtViewer.Core;
@@ -11,8 +12,9 @@ namespace JwtViewer.ViewModels
         private readonly FileManager _fileManager = new FileManager();
         private Jwt _jwt;
         private string _authority;
+        public event EventHandler AuthorityChanged;
 
-        public List<string> Authorities { get; }
+        public ObservableCollection<string> Authorities { get; }
 
         public string Authority
         {
@@ -20,12 +22,30 @@ namespace JwtViewer.ViewModels
             set
             {
                 _authority = value;
-                Validation.LoadConfiguration(value);
-                if (_jwt != null)
-                {
-                    Validation.ValidateToken(_jwt);
-                }
+                AuthorityChanged?.Invoke(this, EventArgs.Empty);
                 OnPropertyChanged();
+            }
+        }
+
+        public string NewAuthority
+        {
+            set
+            {
+                if (value == null && Authority != null)
+                {
+                    Authorities.Remove(Authority);
+                    Authority = Authorities.FirstOrDefault();
+                    return;
+                }
+                if (Authority != null)
+                {
+                    return;
+                }
+                if (!string.IsNullOrWhiteSpace(value))
+                {
+                    Authorities.Add(value);
+                    Authority = value;
+                }
             }
         }
 
@@ -52,14 +72,28 @@ namespace JwtViewer.ViewModels
             Jwt = new JwtViewModel();
             Validation = new ValidationViewModel();
             var settings = _fileManager.LoadJson<Settings>() ?? new Settings();
-            Authorities = settings.Authorities;
+            Authorities = new ObservableCollection<string>(settings.Authorities);
             Authority = settings.Authorities.FirstOrDefault();
             RefreshAuthority = new DelegateCommand(DoRefreshAuthority);
+            AuthorityChanged += UpdateConfiguration;
         }
 
-        private void DoRefreshAuthority()
+        private async void UpdateConfiguration(object sender, EventArgs e)
         {
-            Validation.RefreshConfiguration(Authority);
+            await Validation.LoadConfiguration(Authority);
+            if (_jwt != null)
+            {
+                Validation.ValidateToken(_jwt);
+            }
+        }
+
+        private async void DoRefreshAuthority()
+        {
+            await Validation.RefreshConfiguration(Authority);
+            if (_jwt != null)
+            {
+                Validation.ValidateToken(_jwt);
+            }
         }
 
         public void Save()
@@ -69,6 +103,10 @@ namespace JwtViewer.ViewModels
                 Authority = Authority,
                 Raw = Raw
             });
+            _fileManager.SaveJson(new Settings
+            {
+                Authorities = Authorities.ToList()
+            });
         }
 
         public void Load()
@@ -76,6 +114,22 @@ namespace JwtViewer.ViewModels
             var data = _fileManager.LoadJson<TempData>() ?? new TempData();
             Authority = data.Authority ?? Authorities.FirstOrDefault();
             Raw = data.Raw;
+        }
+
+        public void RemoveAuthority()
+        {
+            if (Authority != null)
+            {
+                var index = Authorities.IndexOf(Authority);
+                Authorities.Remove(Authority);
+                while (index >= 0 && index >= Authorities.Count)
+                {
+                    index--;
+                }
+                Authority = index >= 0 && index < Authorities.Count
+                    ? Authorities[index]
+                    : Authorities.FirstOrDefault();
+            }
         }
     }
 }

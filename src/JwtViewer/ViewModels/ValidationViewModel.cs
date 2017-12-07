@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using JwtViewer.Core;
 using Newtonsoft.Json;
 
@@ -41,11 +42,11 @@ namespace JwtViewer.ViewModels
 
         private TokenValidator _tokenValidator;
 
-        public void LoadConfiguration(string authority)
+        public async Task LoadConfiguration(string authority)
         {
             try
             {
-                var config = DiscoveryLoader.Load(authority);
+                var config = await DiscoveryLoader.LoadConfigurationAsync(authority);
                 _tokenValidator = new TokenValidator(config);
                 Config = JsonConvert.SerializeObject(config, Formatting.Indented);
             }
@@ -56,11 +57,11 @@ namespace JwtViewer.ViewModels
             }
         }
 
-        public void RefreshConfiguration(string authority)
+        public async Task RefreshConfiguration(string authority)
         {
             try
             {
-                var config = DiscoveryLoader.Refresh(authority);
+                var config = await DiscoveryLoader.RefreshConfigurationAsync(authority);
                 _tokenValidator = new TokenValidator(config);
                 Config = JsonConvert.SerializeObject(config, Formatting.Indented);
             }

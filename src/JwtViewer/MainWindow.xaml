@@ -126,7 +126,10 @@
                 <Label Grid.Column="0">Authority</Label>
                 <ComboBox Grid.Column="1" ToolTip="Authority"
                           ItemsSource="{Binding Path=Authorities}"
-                          SelectedValue="{Binding Path=Authority}" 
+                          SelectedValue="{Binding Path=Authority}"
+                          IsEditable="True"
+                          Text="{Binding Path=NewAuthority, UpdateSourceTrigger=LostFocus}"
+                          PreviewKeyDown="Authorities_KeyUp"
                           BorderThickness="0"/>
                 <Button Grid.Column="2" Command="{Binding Path=RefreshAuthority}">RefreshConfiguration</Button>
             </Grid>

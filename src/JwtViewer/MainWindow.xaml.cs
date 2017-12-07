@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using JwtViewer.IO;
 using JwtViewer.ViewModels;
 
@@ -37,6 +39,20 @@ namespace JwtViewer
             _fileManager.SaveJson(settings);
             Vm.Save();
             base.OnClosing(e);
+        }
+
+        private void Authorities_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyboardDevice.Modifiers == ModifierKeys.Shift && (e.SystemKey == Key.Delete || e.Key == Key.Delete))
+            {
+                e.Handled = true;
+                Vm.RemoveAuthority();
+            }
+            else if (e.Key == Key.Enter || e.SystemKey == Key.Enter)
+            {
+                e.Handled = true;
+                Vm.NewAuthority = ((ComboBox) sender).Text;
+            }
         }
     }
 
