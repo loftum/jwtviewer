@@ -11,9 +11,14 @@ namespace JwtViewer.Core
             return Convert.ToBase64String(bytes);
         }
 
-        public static string Decode(string base64)
+        public static byte[] ToBytes(string base64)
         {
-            var bytes = Convert.FromBase64String(base64);
+            return Convert.FromBase64String(base64);
+        }
+
+        public static string DecodeToString(string base64)
+        {
+            var bytes = ToBytes(base64);
             return Encoding.UTF8.GetString(bytes);
         }
 
@@ -31,14 +36,24 @@ namespace JwtViewer.Core
                 .ToString();
         }
 
-        public static string UrlDecode(string base64Url)
+        public static byte[] UrlDecode(string base64Url)
         {
             var padLength = (4 - base64Url.Length % 4) % 4;
             var value = new StringBuilder(base64Url)
                 .Replace('-', '+')
                 .Replace('_', '/')
                 .Append('=', padLength);
-            return Decode(value.ToString());
+            return ToBytes(value.ToString());
+        }
+
+        public static string UrlDecodeToString(string base64Url)
+        {
+            var padLength = (4 - base64Url.Length % 4) % 4;
+            var value = new StringBuilder(base64Url)
+                .Replace('-', '+')
+                .Replace('_', '/')
+                .Append('=', padLength);
+            return DecodeToString(value.ToString());
         }
     }
 }

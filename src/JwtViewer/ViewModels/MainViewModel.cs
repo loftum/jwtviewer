@@ -1,62 +1,88 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Input;
 using JwtViewer.Core;
 using JwtViewer.IO;
 
 namespace JwtViewer.ViewModels
 {
+    public class DelegateCommand : ICommand
+    {
+        private readonly Action _action;
+
+        public DelegateCommand(Action action)
+        {
+            _action = action;
+        }
+
+        public bool CanExecute(object parameter)
+        {
+            return true;
+        }
+
+        public void Execute(object parameter)
+        {
+            _action();
+        }
+
+        public event EventHandler CanExecuteChanged;
+    }
+
     public class MainViewModel : PropertyChangedNotifier
     {
         private readonly FileManager _fileManager = new FileManager();
-        private string _raw;
+        private Jwt _jwt;
         private string _authority;
 
         public List<string> Authorities { get; }
 
-        private TokenValidator _tokenValidator;
-
         public string Authority
         {
-            get { return _authority; }
+            get => _authority;
             set
             {
                 _authority = value;
-                OnPropertyChanged();
-                _tokenValidator = value == null ? null : TokenValidator.For(value);
-            }
-        }
-
-        private bool _isValid;
-        public bool IsValid
-        {
-            get { return _isValid; }
-            set
-            {
-                _isValid = value;
+                Validation.Load(value);
+                if (_jwt != null)
+                {
+                    Validation.ValidateToken(_jwt);
+                }
                 OnPropertyChanged();
             }
         }
 
         public string Raw
         {
-            get { return _raw; }
+            get => _jwt?.Raw;
             set
             {
-                _raw = value;
-                IsValid = _tokenValidator.ValidateSignature(value);
+                var jwt = new Jwt(value);
+                Jwt.Show(jwt);
+                Validation.ValidateToken(jwt);
+                _jwt = jwt;
                 OnPropertyChanged();
-                Jwt.Parse(value);
             }
         }
 
+        public ValidationViewModel Validation { get; }
         public JwtViewModel Jwt { get; }
+
+        public ICommand RefreshAuthority { get; }
 
         public MainViewModel()
         {
+            Jwt = new JwtViewModel();
+            Validation = new ValidationViewModel();
             var settings = _fileManager.LoadJson<Settings>() ?? new Settings();
             Authorities = settings.Authorities;
             Authority = settings.Authorities.FirstOrDefault();
-            Jwt = new JwtViewModel();
+            RefreshAuthority = new DelegateCommand(DoRefreshAuthority);
+        }
+
+        private void DoRefreshAuthority()
+        {
+            Validation.Refresh(Authority);
         }
 
         public void Save()

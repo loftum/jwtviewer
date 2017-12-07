@@ -6,67 +6,147 @@
         xmlns:viewModels="clr-namespace:JwtViewer.ViewModels"
         xmlns:controls="clr-namespace:JwtViewer.Controls"
         mc:Ignorable="d"
-        Title="JWT Viewer" Height="600" Width="800" Icon="icon.jpg">
+        Title="JWT Viewer" Height="600" Width="800" Icon="icon.ico">
     <Window.DataContext>
-        <viewModels:MainViewModel/>
+        <viewModels:MainViewModel />
     </Window.DataContext>
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <Grid Grid.Row="0">
-            <ComboBox ItemsSource="{Binding Path=Authorities}" SelectedValue="{Binding Path=Authority}"></ComboBox>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Label Grid.Row="0" Content="Encoded" />
+            <controls:EditorTextBox Grid.Row="1"
+                                    x:Name="Jwt"
+                                    BorderThickness="0"
+                                    Text="{Binding Path=Raw, Mode=TwoWay}"
+                                    TextWrapping="Wrap"
+                                    FontFamily="Lucida Console" />
+
         </Grid>
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Grid Grid.Column="0">
+
+        <GridSplitter VerticalAlignment="Stretch" HorizontalAlignment="Center"
+                      Background="LightGray"
+                      Grid.Column="1" ResizeBehavior="PreviousAndNext"
+                      Width="5" />
+
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <Label Grid.Row="0" Content="Encoded"></Label>
-                <controls:EditorTextBox Grid.Row="1" x:Name="Jwt" Text="{Binding Path=Raw, Mode=TwoWay}" TextWrapping="Wrap" FontFamily="Lucida Console"/>
+                <Label Grid.Row="0" Content="Header" />
+                <TextBox Grid.Row="1" Name="Header"
+                         MinLines="3"
+                         IsReadOnly="True"
+                         Text="{Binding Path=Jwt.Header, Mode=OneWay}"
+                         FontFamily="Lucida Console"
+                         BorderThickness="0"
+                         HorizontalScrollBarVisibility="Auto"
+                         VerticalScrollBarVisibility="Auto" />
             </Grid>
 
-            <GridSplitter VerticalAlignment="Stretch" HorizontalAlignment="Center"
-                          Background="LightGray"
-                          Grid.Column="1" ResizeBehavior="PreviousAndNext"
-                          Width="5" />
-            <Grid Grid.Column="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Grid Grid.Row="0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Label Grid.Row="0" Content="Header"></Label>
-                    <TextBox Grid.Row="1" MinLines="3" Name="Header" Text="{Binding Path=Jwt.Header, Mode=OneWay}" FontFamily="Lucida Console"/>
-                </Grid>
-
-                <GridSplitter VerticalAlignment="Center" HorizontalAlignment="Stretch"
+            <GridSplitter VerticalAlignment="Center" HorizontalAlignment="Stretch"
                           Background="LightGray"
                           Grid.Row="1" ResizeBehavior="PreviousAndNext"
                           Height="5" />
-                <Grid Grid.Row="2">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Label Grid.Row="0" Content="Payload"></Label>
-                    <TextBox Grid.Row="1" Name="Payload" Text="{Binding Path=Jwt.Payload, Mode=OneWay}" FontFamily="Lucida Console"/>
-                </Grid>
+            <Grid Grid.Row="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0" Content="Payload" />
+                <TextBox Grid.Row="1" Name="Payload"
+                         Text="{Binding Path=Jwt.Payload, Mode=OneWay}"
+                         IsReadOnly="True"
+                         FontFamily="Lucida Console"
+                         BorderThickness="0"
+                         HorizontalScrollBarVisibility="Auto"
+                         VerticalScrollBarVisibility="Auto" />
+            </Grid>
 
+            <GridSplitter VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                          Background="LightGray"
+                          Grid.Row="3" ResizeBehavior="PreviousAndNext"
+                          Height="5" />
+
+            <Grid Grid.Row="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0" Content="Signature" />
+                <TextBox Grid.Row="1" Name="Signature"
+                         IsReadOnly="True"
+                         Text="{Binding Path=Jwt.Signature, Mode=OneWay}"
+                         FontFamily="Lucida Console"
+                         BorderThickness="0"
+                         TextWrapping="Wrap" />
             </Grid>
         </Grid>
-        
+
+        <GridSplitter VerticalAlignment="Stretch" HorizontalAlignment="Center"
+                      Background="LightGray"
+                      Grid.Column="3" ResizeBehavior="PreviousAndNext"
+                      Width="5" />
+
+        <Grid Grid.Column="4">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Label Grid.Row="0">Validation</Label>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0">Authority</Label>
+                <ComboBox Grid.Column="1" ToolTip="Authority"
+                          ItemsSource="{Binding Path=Authorities}"
+                          SelectedValue="{Binding Path=Authority}" 
+                          BorderThickness="0"/>
+                <Button Grid.Column="2" Command="{Binding Path=RefreshAuthority}">Refresh</Button>
+            </Grid>
+            
+            <TextBox Grid.Row="2" MinLines="3" Name="Jwks"
+                     IsReadOnly="True"
+                     Text="{Binding Path=Validation.Config, Mode=OneWay}"
+                     FontFamily="Lucida Console"
+                     BorderThickness="0"
+                     HorizontalScrollBarVisibility="Auto"
+                     VerticalScrollBarVisibility="Auto" />
+            <TextBox Grid.Row="3" MinLines="3" Name="ValidationResult"
+                     IsReadOnly="True"
+                     Text="{Binding Path=Validation.ValidationResult, Mode=OneWay}"
+                     TextWrapping="Wrap"
+                     BorderThickness="0"
+                     FontFamily="Lucida Console"
+                     HorizontalScrollBarVisibility="Auto"
+                     VerticalScrollBarVisibility="Auto" />
+        </Grid>
+
+
     </Grid>
 </Window>

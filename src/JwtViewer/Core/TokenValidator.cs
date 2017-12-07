@@ -1,127 +1,64 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Net;
+using System.Security.Cryptography;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
 
 namespace JwtViewer.Core
 {
     public class TokenValidator
     {
-        private static readonly string FilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files");
-        static TokenValidator()
+        private static readonly Dictionary<string, string> HashAlgorithmMap = new Dictionary<string, string>
         {
-            if (!Directory.Exists(FilePath))
-            {
-                Directory.CreateDirectory(FilePath);
-            }
+            ["RS256"] = "SHA256"
+        };
+
+        private readonly string _issuer;
+        private readonly IList<Jwk> _keys;
+        private readonly JToken _openidConfig;
+        private readonly JToken _jwks;
+
+        public TokenValidator()
+        {
+            _keys = new List<Jwk>();
         }
 
-        private readonly IList<Jwks> _keys;
-
-        public bool ValidateSignature(string jwt)
+        public TokenValidator(JToken config)
         {
-            try
-            {
-                var parts = jwt?.Split('.');
-                if (parts?.Length != 3)
-                {
-                    return false;
-                }
+            var openidConfig = config["openid-configuration"];
+            
+            var jwks = config["jwks"];
 
-                var header = parts[0];
-                var payload = parts[1];
-                var signature = parts[2];
+            var keys = (JArray) jwks["keys"];
 
-                var key = _keys.FirstOrDefault(k => k.CanSign);
-                if (key == null)
-                {
-                    return false;
-                }
-                var expectedSignature = key.Sign(header, payload);
-
-                return expectedSignature == signature;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
+            _keys = keys.Select(d => new Jwk(d)).ToList();
+            _issuer = openidConfig["issuer"]?.ToString();
+            _jwks = jwks;
+            _openidConfig = openidConfig;
         }
 
-        public TokenValidator(IList<Jwks> keys)
+        public void ValidateToken(Jwt jwt)
         {
-            _keys = keys;
-        }
-
-        public static TokenValidator For(string authority)
-        {
-            try
+            var parameters = new TokenValidationParameters
             {
-                var config = FromFile(authority) ?? FetchAndStore(authority);
-                var keys = ((JArray)config["keys"]).Select(c => new Jwks(c)).ToList();
-                return new TokenValidator(keys);
-            }
-            catch 
-            {
-                return new TokenValidator(new List<Jwks>());
-            }
-        }
-
-        private static JObject FetchAndStore(string authority)
-        {
-            var config = Fetch(authority);
-            Store(config, authority);
-            return config;
-        }
-
-        private static void Store(JObject config, string authority)
-        {
-            var path = Path.Combine(FilePath, authority, "jwks.json");
-            var directory = Path.GetDirectoryName(path);
-            if (!Directory.Exists(directory))
-            {
-                Directory.CreateDirectory(directory);
-            }
-            File.WriteAllText(path, config.ToString());
-        }
-
-        private static JObject Fetch(string authority)
-        {
-            var request = WebRequest.CreateHttp($"https://{authority}/core/.well-known/jwks");
-            using (var response = request.GetResponse())
-            {
-                using (var stream = response.GetResponseStream())
-                {
-                    if (stream == null)
+                ValidIssuer = _issuer,
+                ValidAudience = jwt.Payload?["aud"]?.ToString(),
+                IssuerSigningKeys = _keys.Select(k => new RsaSecurityKey(new RSAParameters{Exponent = Base64.UrlDecode(k.PemExponent), Modulus = Base64.UrlDecode(k.PemModulus)})
                     {
-                        throw new ApplicationException("Stream is null. Wat");
-                    }
-                    using (var reader = new StreamReader(stream))
-                    {
-                        var content = reader.ReadToEnd();
-                        var config = JObject.Parse(content);
-                        return config;
-                    }
-                }
-            }
+                        KeyId = k.KeyId,
+                        
+                    })
+            };
+            
+            var handler = new JwtSecurityTokenHandler();
+            var principal = handler.ValidateToken(jwt.Raw, parameters, out var validatedToken);
         }
 
-        private static JObject FromFile(string authority)
+        private static string GetHashAlgorithm(string alg)
         {
-            var path = Path.Combine(FilePath, authority, "jwks.json");
-            if (!File.Exists(path))
-            {
-                return null;
-            }
-            using (var stream = File.OpenRead(path))
-            {
-                using (var reader = new StreamReader(stream))
-                {
-                    var content = reader.ReadToEnd();
-                    return JObject.Parse(content);
-                }
-            }
+            return HashAlgorithmMap.TryGetValue(alg, out var val) ? val : alg;
         }
     }
 }

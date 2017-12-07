@@ -35,7 +35,7 @@ namespace JwtViewer
                 Width = Width
             };
             _fileManager.SaveJson(settings);
-            //Vm.Save();
+            Vm.Save();
             base.OnClosing(e);
         }
     }
