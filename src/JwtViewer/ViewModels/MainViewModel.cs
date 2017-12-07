@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
 using JwtViewer.Core;
@@ -7,28 +6,6 @@ using JwtViewer.IO;
 
 namespace JwtViewer.ViewModels
 {
-    public class DelegateCommand : ICommand
-    {
-        private readonly Action _action;
-
-        public DelegateCommand(Action action)
-        {
-            _action = action;
-        }
-
-        public bool CanExecute(object parameter)
-        {
-            return true;
-        }
-
-        public void Execute(object parameter)
-        {
-            _action();
-        }
-
-        public event EventHandler CanExecuteChanged;
-    }
-
     public class MainViewModel : PropertyChangedNotifier
     {
         private readonly FileManager _fileManager = new FileManager();
@@ -43,7 +20,7 @@ namespace JwtViewer.ViewModels
             set
             {
                 _authority = value;
-                Validation.Load(value);
+                Validation.LoadConfiguration(value);
                 if (_jwt != null)
                 {
                     Validation.ValidateToken(_jwt);
@@ -82,7 +59,7 @@ namespace JwtViewer.ViewModels
 
         private void DoRefreshAuthority()
         {
-            Validation.Refresh(Authority);
+            Validation.RefreshConfiguration(Authority);
         }
 
         public void Save()

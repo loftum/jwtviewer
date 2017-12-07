@@ -54,6 +54,7 @@ namespace JwtViewer.Core
             
             var handler = new JwtSecurityTokenHandler();
             var principal = handler.ValidateToken(jwt.Raw, parameters, out var validatedToken);
+            
         }
 
         private static string GetHashAlgorithm(string alg)

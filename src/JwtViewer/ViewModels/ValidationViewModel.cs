@@ -41,11 +41,26 @@ namespace JwtViewer.ViewModels
 
         private TokenValidator _tokenValidator;
 
-        public void Load(string authority)
+        public void LoadConfiguration(string authority)
         {
             try
             {
                 var config = DiscoveryLoader.Load(authority);
+                _tokenValidator = new TokenValidator(config);
+                Config = JsonConvert.SerializeObject(config, Formatting.Indented);
+            }
+            catch (Exception e)
+            {
+                _tokenValidator = new TokenValidator();
+                Config = e.ToString();
+            }
+        }
+
+        public void RefreshConfiguration(string authority)
+        {
+            try
+            {
+                var config = DiscoveryLoader.Refresh(authority);
                 _tokenValidator = new TokenValidator(config);
                 Config = JsonConvert.SerializeObject(config, Formatting.Indented);
             }
@@ -68,21 +83,6 @@ namespace JwtViewer.ViewModels
             {
                 ValidationResult = e.ToString();
                 IsValid = false;
-            }
-        }
-
-        public void Refresh(string authority)
-        {
-            try
-            {
-                var config = DiscoveryLoader.Refresh(authority);
-                _tokenValidator = new TokenValidator(config);
-                Config = JsonConvert.SerializeObject(config, Formatting.Indented);
-            }
-            catch (Exception e)
-            {
-                _tokenValidator = new TokenValidator();
-                Config = e.ToString();
             }
         }
     }

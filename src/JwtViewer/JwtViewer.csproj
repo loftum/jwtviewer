@@ -82,6 +82,7 @@
     <Compile Include="IO\Settings.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Syntax\JwtSyntaxParser.cs" />
+    <Compile Include="ViewModels\DelegateCommand.cs" />
     <Compile Include="ViewModels\ValidationViewModel.cs" />
     <Compile Include="ViewModels\JwtViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
