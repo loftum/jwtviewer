@@ -41,7 +41,7 @@ namespace JwtViewer
             base.OnClosing(e);
         }
 
-        private void Authorities_KeyUp(object sender, KeyEventArgs e)
+        private void Authorities_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyboardDevice.Modifiers == ModifierKeys.Shift && (e.SystemKey == Key.Delete || e.Key == Key.Delete))
             {

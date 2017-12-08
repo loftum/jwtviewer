@@ -11,7 +11,9 @@ namespace JwtViewer.Core
         public string Signature { get; }
 
         public JObject Header { get; }
+        public Exception HeaderError { get; }
         public JObject Payload { get; }
+        public Exception PayloadError { get; }
 
         public Jwt(string raw)
         {
@@ -26,18 +28,38 @@ namespace JwtViewer.Core
                 return;
             }
             RawHeader = parts[0];
-            Header = JObject.Parse(Base64.UrlDecodeToString(parts[0]));
+            try
+            {
+                Header = ParseOrFail(parts[0]);
+            }
+            catch (Exception e)
+            {
+                HeaderError = e;
+            }
+            
             if (parts.Length < 2)
             {
                 return;
             }
             RawPayload = parts[1];
-            Payload = JObject.Parse(Base64.UrlDecodeToString(parts[1]));
+            try
+            {
+                Payload = ParseOrFail(parts[1]);
+            }
+            catch (Exception e)
+            {
+                PayloadError = e;
+            }
             if (parts.Length < 3)
             {
                 return;
             }
             Signature = parts[2];
+        }
+
+        private static JObject ParseOrFail(string part)
+        {
+            return JObject.Parse(Base64.UrlDecodeToString(part));
         }
     }
 }

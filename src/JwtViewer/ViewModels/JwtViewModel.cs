@@ -60,7 +60,7 @@ namespace JwtViewer.ViewModels
         public void Show(Jwt jwt)
         {
             Raw = jwt.Raw;
-            Header = jwt.Header?.ToString();
+            Header = jwt.Header?.ToString() ?? jwt.HeaderError?.ToString();
             Payload = CalculatePayload(jwt);
             Signature = jwt.Signature;
         }
@@ -69,7 +69,7 @@ namespace JwtViewer.ViewModels
         {
             if (jwt.Payload == null)
             {
-                return null;
+                return jwt.PayloadError?.ToString();
             }
             var payload = (JObject) jwt.Payload.DeepClone();
             var help = new JObject();

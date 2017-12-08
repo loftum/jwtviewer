@@ -26,7 +26,7 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Label Grid.Row="0" Content="Encoded" />
-            <controls:EditorTextBox Grid.Row="1"
+            <controls:JwtTextBox Grid.Row="1"
                                     x:Name="Jwt"
                                     BorderThickness="0"
                                     Text="{Binding Path=Raw, Mode=TwoWay}"
@@ -59,6 +59,7 @@
                          IsReadOnly="True"
                          Text="{Binding Path=Jwt.Header, Mode=OneWay}"
                          FontFamily="Lucida Console"
+                         Foreground="Red"
                          BorderThickness="0"
                          HorizontalScrollBarVisibility="Auto"
                          VerticalScrollBarVisibility="Auto" />
@@ -78,6 +79,7 @@
                          Text="{Binding Path=Jwt.Payload, Mode=OneWay}"
                          IsReadOnly="True"
                          FontFamily="Lucida Console"
+                         Foreground="DarkOrchid"
                          BorderThickness="0"
                          HorizontalScrollBarVisibility="Auto"
                          VerticalScrollBarVisibility="Auto" />
@@ -98,6 +100,7 @@
                          IsReadOnly="True"
                          Text="{Binding Path=Jwt.Signature, Mode=OneWay}"
                          FontFamily="Lucida Console"
+                         Foreground="DeepSkyBlue"
                          BorderThickness="0"
                          TextWrapping="Wrap" />
             </Grid>
@@ -129,8 +132,8 @@
                           SelectedValue="{Binding Path=Authority}"
                           IsEditable="True"
                           Text="{Binding Path=NewAuthority, UpdateSourceTrigger=LostFocus}"
-                          PreviewKeyDown="Authorities_KeyUp"
-                          BorderThickness="0"/>
+                          PreviewKeyDown="Authorities_PreviewKeyDown"
+                          BorderThickness="1"/>
                 <Button Grid.Column="2" Command="{Binding Path=RefreshAuthority}">RefreshConfiguration</Button>
             </Grid>
             

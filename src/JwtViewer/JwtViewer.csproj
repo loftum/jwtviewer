@@ -71,7 +71,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Controls\EditorTextBox.cs" />
+    <Compile Include="Controls\JwtTextBox.cs" />
+    <Compile Include="Controls\Token.cs" />
     <Compile Include="Core\Base64.cs" />
     <Compile Include="Core\Jwk.cs" />
     <Compile Include="Core\DiscoveryLoader.cs" />
@@ -88,7 +89,7 @@
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\PropertyChangedNotifier.cs" />
     <Compile Include="ViewModels\TempData.cs" />
-    <Page Include="Controls\EditorTextBox.xaml">
+    <Page Include="Controls\JwtTextBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
