@@ -42,10 +42,12 @@ namespace JwtViewer.Core
 
         private static async Task<JObject> FromInternet(string authority)
         {
+            var openIdConfig = await Request($"https://{authority}/.well-known/openid-configuration");
+            var jwks = await Request(openIdConfig["jwks_uri"].ToString());
             var config = new JObject
             {
-                ["openid-configuration"] = await Request($"https://{authority}/.well-known/openid-configuration"),
-                ["jwks"] = await Request($"https://{authority}/.well-known/jwks")
+                ["openid-configuration"] = openIdConfig,
+                ["jwks"] = jwks
             };
             return config;
         }
