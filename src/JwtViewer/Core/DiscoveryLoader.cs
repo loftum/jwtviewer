@@ -22,16 +22,17 @@ namespace JwtViewer.Core
             return await FromFile(authority) ?? await RefreshConfigurationAsync(authority);
         }
 
-        public static Task<JObject> RefreshConfigurationAsync(string authority)
+        public static async Task<JObject> RefreshConfigurationAsync(string authority)
         {
-            var config = FromInternet(authority);
+            var config = await FromInternet(authority);
             Store(config, authority);
             return config;
         }
 
         private static void Store(object config, string authority)
         {
-            var path = Path.Combine(FilePath, authority, "jwks.json");
+            var part = authority.Replace("https://", "").Replace("http://", "");
+            var path = Path.Combine(FilePath, part, "jwks.json");
             var directory = Path.GetDirectoryName(path);
             if (!Directory.Exists(directory))
             {
@@ -42,7 +43,7 @@ namespace JwtViewer.Core
 
         private static async Task<JObject> FromInternet(string authority)
         {
-            var openIdConfig = await Request($"https://{authority}/.well-known/openid-configuration");
+            var openIdConfig = await Request($"{authority}/.well-known/openid-configuration");
             var jwks = await Request(openIdConfig["jwks_uri"].ToString());
             var config = new JObject
             {
@@ -54,21 +55,30 @@ namespace JwtViewer.Core
 
         private static async Task<JObject> Request(string url)
         {
-            var request = WebRequest.CreateHttp(url);
-            using (var response = await request.GetResponseAsync())
+            try
             {
-                using (var stream = response.GetResponseStream())
+                var request = WebRequest.CreateHttp(url);
+                request.Method = "GET";
+                request.Accept = "application/json";
+                using (var response = await request.GetResponseAsync())
                 {
-                    if (stream == null)
+                    using (var stream = response.GetResponseStream())
                     {
-                        throw new ApplicationException("Stream is null. Wat");
-                    }
-                    using (var reader = new StreamReader(stream))
-                    {
-                        var content = await reader.ReadToEndAsync();
-                        return JObject.Parse(content);
+                        if (stream == null)
+                        {
+                            throw new ApplicationException("Stream is null. Wat");
+                        }
+                        using (var reader = new StreamReader(stream))
+                        {
+                            var content = await reader.ReadToEndAsync();
+                            return JObject.Parse(content);
+                        }
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                throw new Exception($"Could not reach {url}", e);
             }
         }
 
