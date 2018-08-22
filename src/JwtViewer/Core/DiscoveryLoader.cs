@@ -84,7 +84,8 @@ namespace JwtViewer.Core
 
         private static async Task<JObject> FromFile(string authority)
         {
-            var path = Path.Combine(FilePath, authority, "discovery.json");
+            var part = authority.Replace("https://", "").Replace("http://", "");
+            var path = Path.Combine(FilePath, part, "discovery.json");
             if (!File.Exists(path))
             {
                 return null;
