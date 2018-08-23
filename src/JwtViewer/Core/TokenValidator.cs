@@ -45,13 +45,28 @@ namespace JwtViewer.Core
             {
                 ValidIssuer = _issuer,
                 ValidAudience = jwt.Payload?["aud"]?.ToString(),
+                
                 IssuerSigningKeys = _keys.Select(k => new RsaSecurityKey(new RSAParameters{Exponent = Base64.UrlDecode(k.PemExponent), Modulus = Base64.UrlDecode(k.PemModulus)})
                     {
                         KeyId = k.KeyId,
                         
                     })
             };
-            
+
+            var aud = jwt.Payload?["aud"];
+            if (aud != null)
+            {
+                switch (aud.Type)
+                {
+                    case JTokenType.Array:
+                        parameters.ValidAudiences = aud.Values<string>();
+                        break;
+                    case JTokenType.String:
+                        parameters.ValidAudience = aud.Value<string>();
+                        break;
+                }
+            }
+
             var handler = new JwtSecurityTokenHandler();
             var principal = handler.ValidateToken(jwt.Raw, parameters, out var validatedToken);
             
