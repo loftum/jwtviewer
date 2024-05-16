@@ -1,9 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JwtViewer", "JwtViewer\JwtViewer.csproj", "{2339166C-F758-498C-BF0A-D3881FC69552}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JwtViewer", "JwtViewer\JwtViewer.csproj", "{118E5A40-AE14-46BE-B606-57FF7E39A957}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,12 +8,9 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2339166C-F758-498C-BF0A-D3881FC69552}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2339166C-F758-498C-BF0A-D3881FC69552}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2339166C-F758-498C-BF0A-D3881FC69552}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2339166C-F758-498C-BF0A-D3881FC69552}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
+		{118E5A40-AE14-46BE-B606-57FF7E39A957}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{118E5A40-AE14-46BE-B606-57FF7E39A957}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{118E5A40-AE14-46BE-B606-57FF7E39A957}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{118E5A40-AE14-46BE-B606-57FF7E39A957}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

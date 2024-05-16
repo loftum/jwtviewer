@@ -1,0 +1,18 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:reactiveUi="clr-namespace:ReactiveUI;assembly=ReactiveUI"
+             xmlns:views="clr-namespace:JwtViewer.Views"
+             x:Class="JwtViewer.App"
+             Name="Jwt viewer">
+    <Application.DataTemplates>
+        <views:ViewLocator/>
+    </Application.DataTemplates>
+    
+    <Application.Styles>
+        <FluentTheme />
+        <StyleInclude Source="avares://Avalonia.Themes.Fluent/FluentTheme.xaml"/>
+        <StyleInclude Source="avares://Avalonia.Themes.Simple/SimpleTheme.xaml"/>
+        <StyleInclude Source="avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml" />
+        
+    </Application.Styles>
+</Application>
