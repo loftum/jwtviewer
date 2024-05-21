@@ -1,0 +1,44 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:core="clr-namespace:JwtViewer.ViewModels.Core"
+             xmlns:avaloniaEdit="https://github.com/avaloniaui/avaloniaedit"
+             mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="300"
+             x:Class="JwtViewer.Views.JwtEditor">
+    <UserControl.DataContext>
+        <core:Jwt/>
+    </UserControl.DataContext>
+    
+    <Grid RowDefinitions="Auto,Auto,Auto">
+        <avaloniaEdit:TextEditor Grid.Row="0"
+                                 x:Name="Header"
+                                 FontFamily="Monaco"
+                                 ShowLineNumbers="false"
+                                 WordWrap="true"
+                                 IsEnabled="true"
+                                 IsReadOnly="false"
+                                 Foreground="Red"
+        />
+        <avaloniaEdit:TextEditor Grid.Row="1"
+                                 x:Name="Payload"
+                                 FontFamily="Monaco"
+                                 ShowLineNumbers="false"
+                                 WordWrap="true"
+                                 IsEnabled="true"
+                                 IsReadOnly="false"
+                                 Foreground="Magenta"
+        />
+        <avaloniaEdit:TextEditor Grid.Row="2"
+                                 x:Name="Signature"
+                                 Foreground="DodgerBlue"
+                                 FontFamily="Monaco"
+                                 ShowLineNumbers="false"
+                                 WordWrap="true"
+                                 IsEnabled="true"
+                                 IsReadOnly="false"
+                                 
+        />
+        
+    </Grid>
+</UserControl>

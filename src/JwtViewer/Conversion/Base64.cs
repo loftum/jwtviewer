@@ -27,6 +27,21 @@ public static class Base64
         return Convert.FromBase64String(base64);
     }
 
+    public static bool TryDecode(string base64, out byte[] decoded)
+    {
+        try
+        {
+            decoded = Decode(base64);
+            return true;
+        }
+        catch
+        {
+            decoded = default;
+            return false;
+        }
+        
+    }
+
     public static string UrlEncode(string value)
     {
         return Encode(Encoding.UTF8.GetBytes(value));
@@ -39,6 +54,21 @@ public static class Base64
             .Replace('+', '-')
             .Replace('/', '_')
             .ToString();
+    }
+
+    public static bool TryUrlDecode(string base64UrlFriendly, out byte[] decoded)
+    {
+        decoded = default;
+        if (base64UrlFriendly == null)
+        {
+            return false;
+        }
+        var padLength = (4 - base64UrlFriendly.Length % 4) % 4;
+        var value = new StringBuilder(base64UrlFriendly)
+            .Replace('-', '+')
+            .Replace('_', '/')
+            .Append('=', padLength);
+        return TryDecode(value.ToString(), out decoded);
     }
 
     public static byte[] UrlDecode(string base64UrlFriendly)

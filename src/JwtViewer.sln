@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JwtViewer", "JwtViewer\JwtViewer.csproj", "{118E5A40-AE14-46BE-B606-57FF7E39A957}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "10. Applications", "10. Applications", "{4DE54D37-4A5F-4FF3-A89D-A9CD25C9EF7A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JwtViewer.Tests", "JwtViewer.Tests\JwtViewer.Tests.csproj", "{3F957566-1FA9-466E-8810-7C0F6AF6F5CE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,12 @@ Global
 		{118E5A40-AE14-46BE-B606-57FF7E39A957}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{118E5A40-AE14-46BE-B606-57FF7E39A957}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{118E5A40-AE14-46BE-B606-57FF7E39A957}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F957566-1FA9-466E-8810-7C0F6AF6F5CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F957566-1FA9-466E-8810-7C0F6AF6F5CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F957566-1FA9-466E-8810-7C0F6AF6F5CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F957566-1FA9-466E-8810-7C0F6AF6F5CE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{118E5A40-AE14-46BE-B606-57FF7E39A957} = {4DE54D37-4A5F-4FF3-A89D-A9CD25C9EF7A}
 	EndGlobalSection
 EndGlobal

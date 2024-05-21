@@ -1,3 +1,4 @@
+using JwtViewer.ViewModels.Core;
 using ReactiveUI;
 
 namespace JwtViewer.ViewModels;
@@ -5,8 +6,8 @@ namespace JwtViewer.ViewModels;
 public class MainWindowViewModel : ReactiveObject
 {
     private string _input;
-    private string _accessToken;
-    private string _idToken;
+    private Jwt _accessToken;
+    private Jwt _idToken;
 
     public string Input
     {
@@ -19,13 +20,13 @@ public class MainWindowViewModel : ReactiveObject
         }
     }
 
-    public string AccessToken
+    public Jwt AccessToken
     {
         get => _accessToken;
         set => this.RaiseAndSetIfChanged(ref _accessToken, value);
     }
 
-    public string IdToken
+    public Jwt IdToken
     {
         get => _idToken;
         set => this.RaiseAndSetIfChanged(ref _idToken, value);
@@ -50,15 +51,15 @@ public class MainWindowViewModel : ReactiveObject
         {
             TokenResponse.TryParse(value, out var tokenResponse);
             Jwt.TryParse(tokenResponse?.AccessToken, out var accessToken);
-            AccessToken = accessToken?.DecodedJwt;
-            Jwt.TryParse(tokenResponse?.IdToken, out var jdToken);
-            IdToken = jdToken?.DecodedJwt;
+            AccessToken = accessToken;
+            Jwt.TryParse(tokenResponse?.IdToken, out var idToken);
+            IdToken = idToken;
         }
         
         else if (value.StartsWith("ey"))
         {
             Jwt.TryParse(value, out var accessToken);
-            AccessToken = accessToken?.DecodedJwt;
+            AccessToken = accessToken;
             IdToken = null;
         }
     }
