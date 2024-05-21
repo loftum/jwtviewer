@@ -1,3 +1,4 @@
+using JwtViewer.IO;
 using JwtViewer.ViewModels.Core;
 using ReactiveUI;
 
@@ -8,6 +9,7 @@ public class MainWindowViewModel : ReactiveObject
     private string _input;
     private Jwt _accessToken;
     private Jwt _idToken;
+    private readonly FileManager _fileManager = new("jwtviewer");
 
     public string Input
     {
@@ -16,7 +18,6 @@ public class MainWindowViewModel : ReactiveObject
         {
             Parse(value);
             _input = value;
-            // this.RaiseAndSetIfChanged(ref _input, value);
         }
     }
 
@@ -32,9 +33,14 @@ public class MainWindowViewModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _idToken, value);
     }
 
-
     public MainWindowViewModel()
     {
+        _input = _fileManager.GetTextOrDefault("input.txt");
+    }
+
+    public void Save()
+    {
+        _fileManager.SaveText(_input, "input.txt");
     }
 
     private void Parse(string value)
@@ -49,11 +55,32 @@ public class MainWindowViewModel : ReactiveObject
 
         if (value.StartsWith('{'))
         {
-            TokenResponse.TryParse(value, out var tokenResponse);
-            Jwt.TryParse(tokenResponse?.AccessToken, out var accessToken);
-            AccessToken = accessToken;
-            Jwt.TryParse(tokenResponse?.IdToken, out var idToken);
-            IdToken = idToken;
+            if (!TokenResponse.TryParse(value, out var tokenResponse))
+            {
+                AccessToken = null;
+                IdToken = null;
+                return;
+            }
+
+            if (Jwt.TryParse(tokenResponse.AccessToken, out var accessToken))
+            {
+                accessToken.RawChanged += (_, _, newValue) =>
+                {
+                    tokenResponse.AccessToken = newValue;
+                    this.RaiseAndSetIfChanged(ref _input, tokenResponse.ToPrettyJson(), nameof(Input));
+                };
+                AccessToken = accessToken;
+            }
+
+            if (Jwt.TryParse(tokenResponse.IdToken, out var idToken))
+            {
+                idToken.RawChanged += (_, _, newValue) =>
+                {
+                    tokenResponse.IdToken = newValue;
+                    this.RaiseAndSetIfChanged(ref _input, tokenResponse.ToPrettyJson(), nameof(Input));
+                };
+                IdToken = idToken;
+            }
         }
         
         else if (value.StartsWith("ey"))

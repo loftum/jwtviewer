@@ -19,6 +19,7 @@
                                  IsEnabled="true"
                                  IsReadOnly="false"
                                  Foreground="Red"
+                                 TextChanged="TextChanged"
         />
         <avaloniaEdit:TextEditor Grid.Row="1"
                                  x:Name="Payload"
@@ -28,6 +29,7 @@
                                  IsEnabled="true"
                                  IsReadOnly="false"
                                  Foreground="Magenta"
+                                 TextChanged="TextChanged"
         />
         <avaloniaEdit:TextEditor Grid.Row="2"
                                  x:Name="Signature"
@@ -37,7 +39,7 @@
                                  WordWrap="true"
                                  IsEnabled="true"
                                  IsReadOnly="false"
-                                 
+                                 TextChanged="TextChanged"
         />
         
     </Grid>

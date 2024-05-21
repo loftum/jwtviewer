@@ -32,29 +32,6 @@ public class JwtTest
     }
 
     [Fact]
-    public void Position_IsZero()
-    {
-        Verify.That(Jwt.TryParse(Raw, out var jwt));
-        Verify.That(jwt.Position.IsEqualTo(0));
-    }
-
-    [Fact]
-    public void HeaderPosition_IsZero()
-    {
-        Verify.That(Jwt.TryParse(Raw, out var jwt));
-        Verify.That(jwt.Header.RawPosition.IsEqualTo(0));
-        Verify.That(jwt.Header.JsonStartPosition.IsEqualTo(0));
-    }
-
-    [Fact]
-    public void PayloadPosition_IsSet()
-    {
-        Verify.That(Jwt.TryParse(Raw, out var jwt));
-        Verify.That(jwt.Payload.RawPosition.IsEqualTo(37));
-        Verify.That(jwt.Payload.JsonStartPosition.IsEqualTo(37));
-    }
-
-    [Fact]
     public void Json()
     {
         var json =

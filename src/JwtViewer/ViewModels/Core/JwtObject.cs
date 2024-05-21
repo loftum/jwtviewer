@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 using JwtViewer.Conversion;
 
@@ -14,15 +15,37 @@ public class JwtObject : Dictionary<string, IJwtNode>, IJwtNode
         }
     };
     
-    public int RawPosition { get; set; }
+    private static readonly JsonSerializerOptions NonPretty = new()
+    {
+        WriteIndented = false,
+        Converters =
+        {
+            new JwtNodeConverter()
+        }
+    };
+
     public int JsonStartPosition { get; set; }
     public int JsonEndPosition { get; set; }
 
-    public static bool TryParse(string base64, int offset, out JwtObject o)
+    public static bool TryParse(string base64, out JwtObject o)
     {
         try
         {
-            o = Parse(base64, offset);
+            o = Parse(base64);
+            return true;
+        }
+        catch(Exception)
+        {
+            o = default;
+            return false;
+        }
+    }
+
+    public static bool TryJParseJson(string json, out JwtObject o)
+    {
+        try
+        {
+            o = ParseJson(json);
             return true;
         }
         catch(Exception)
@@ -32,7 +55,7 @@ public class JwtObject : Dictionary<string, IJwtNode>, IJwtNode
         }
     }
     
-    public static JwtObject Parse(string base64, int offset)
+    public static JwtObject Parse(string base64)
     {
         var json = Base64.UrlDecode(base64);
         
@@ -40,7 +63,18 @@ public class JwtObject : Dictionary<string, IJwtNode>, IJwtNode
         if (reader.TryRead() && reader.TokenType == JsonTokenType.StartObject)
         {
             var o = (JwtObject) Read(ref reader);
-            o.RawPosition = offset;
+            return o;
+        }
+        
+        return null;
+    }
+
+    public static JwtObject ParseJson(string json)
+    {
+        var reader = new Utf8JsonReader(Encoding.UTF8.GetBytes(json));
+        if (reader.TryRead() && reader.TokenType == JsonTokenType.StartObject)
+        {
+            var o = (JwtObject) Read(ref reader);
             return o;
         }
         
@@ -92,5 +126,6 @@ public class JwtObject : Dictionary<string, IJwtNode>, IJwtNode
         }
     }
 
-    public string ToJson() => JsonSerializer.Serialize(this, Pretty);
+    public string ToPrettyJson() => JsonSerializer.Serialize(this, Pretty);
+    public string ToJson() => JsonSerializer.Serialize(this, NonPretty);
 }

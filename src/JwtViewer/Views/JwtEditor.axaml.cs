@@ -41,9 +41,25 @@ public partial class JwtEditor : UserControl
         {
             return;
         }
-        _header.Text = _jwt?.Header?.ToJson();
-        _payload.Text = _jwt?.Payload?.ToJson();
+        _header.Text = _jwt?.Header?.ToPrettyJson();
+        _payload.Text = _jwt?.Payload?.ToPrettyJson();
         _signature.Text = _jwt?.Signature;
         IsVisible = _jwt != null;
+    }
+
+    private void TextChanged(object sender, EventArgs e)
+    {
+        if (ReferenceEquals(sender, _header))
+        {
+            _jwt.Header = JwtObject.TryJParseJson(_header.Text, out var o) ? o : null;
+        }
+        else if (ReferenceEquals(sender, _payload))
+        {
+            _jwt.Payload = JwtObject.TryJParseJson(_payload.Text, out var o) ? o : null;
+        }
+        else if (ReferenceEquals(sender, _signature))
+        {
+            _jwt.Signature = _signature.Text;
+        }
     }
 }
