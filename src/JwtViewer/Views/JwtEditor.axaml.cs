@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using AvaloniaEdit;
 using JwtViewer.ViewModels.Core;
@@ -30,7 +31,48 @@ public partial class JwtEditor : UserControl
         _payload.Options = options;
         _signature = this.Get<TextEditor>("Signature");
         _signature.Options = options;
+        
+        ChainElements(new[]{_header, _payload, _signature});
     }
+
+    private static void ChainElements(IList<TextEditor> elements)
+    {
+        using var enumerator = elements.GetEnumerator();
+        TextEditor previous = null;
+        while (enumerator.MoveNext() && enumerator.Current != null)
+        {
+            var current = enumerator.Current;
+            if (previous != null)
+            {
+                Chain(previous, current);
+            }
+            previous = current;
+        }
+        
+        static void Chain(TextEditor previous, TextEditor current)
+        {
+            previous.KeyUp += (s, e) =>
+            {
+                var p = (TextEditor) s;
+                if (e.Key == Key.Down && p.TextArea.Caret.Line == p.LineCount)
+                {
+                    current.CaretOffset = 0;
+                    current.Focus();
+                }
+            };
+        
+            current.KeyUp += (s, e) =>
+            {
+                var c = (TextEditor) s;
+                if (e.Key == Key.Up && c.TextArea.Caret.Line == 1)
+                {
+                    previous.CaretOffset = previous.Text.Length;
+                    previous.Focus();
+                }
+            };
+        }
+    }
+
 
     protected override void OnDataContextChanged(EventArgs e)
     {
