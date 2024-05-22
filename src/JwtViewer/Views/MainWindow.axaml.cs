@@ -1,10 +1,14 @@
 using System.ComponentModel;
+using System.Reactive.Subjects;
+using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using AvaloniaEdit;
 using JwtViewer.IO;
 using JwtViewer.ViewModels;
+using ReactiveUI;
 
 namespace JwtViewer.Views;
 
@@ -29,6 +33,12 @@ public partial class MainWindow : Window
         Position = new PixelPoint(settings.X, settings.Y);
         Height = settings.Height;
         Width = settings.Width;
+
+        // Why is this necessary?
+        var fontSize = this.GetObservable(FontSizeProperty);
+        _accessToken.Bind(FontSizeProperty, fontSize);
+        _idToken.Bind(FontSizeProperty, fontSize);
+        
     }
 
     protected override void OnClosing(WindowClosingEventArgs e)
@@ -57,6 +67,25 @@ public partial class MainWindow : Window
         {
             SetTextInput(_vm.Input);
             _vm.PropertyChanged += OnPropertyChanged;
+            KeyBindings.Clear();
+
+            var meta = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? KeyModifiers.Meta : KeyModifiers.Control;
+            KeyBindings.Add(new KeyBinding
+            {
+                Gesture = new KeyGesture(Key.OemMinus, meta),
+                Command = _vm.DecreaseFontSize
+            });
+            KeyBindings.Add(new KeyBinding
+            {
+                Gesture = new KeyGesture(Key.OemPlus, meta),
+                Command = _vm.IncreaseFontSize
+            });
+            KeyBindings.Add(new KeyBinding
+            {
+                Gesture = new KeyGesture(Key.D0, meta),
+                Command = _vm.ResetFontSize
+            });
+            this.SetPlatformSpecificKeyBindings();
         }
     }
 

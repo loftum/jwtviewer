@@ -13,6 +13,7 @@ public class Jwt : ReactiveObject
     private JwtObject _payload;
     private string _signature;
     private string _raw;
+    private string _title;
 
     public string Raw
     {
@@ -79,6 +80,12 @@ public class Jwt : ReactiveObject
             this.RaiseAndSetIfChanged(ref _signature, value);
             Raw = CalculateRaw();
         }
+    }
+
+    public string Title
+    {
+        get => _title;
+        set => this.RaiseAndSetIfChanged(ref _title, value);
     }
 
     public static bool TryParse(string raw, out Jwt jwt)

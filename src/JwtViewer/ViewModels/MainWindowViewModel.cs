@@ -1,3 +1,4 @@
+using System.Windows.Input;
 using JwtViewer.IO;
 using JwtViewer.ViewModels.Core;
 using ReactiveUI;
@@ -6,10 +7,13 @@ namespace JwtViewer.ViewModels;
 
 public class MainWindowViewModel : ReactiveObject
 {
+    private const int DefaultFontSize = 14;
+    
     private string _input;
     private Jwt _accessToken;
     private Jwt _idToken;
     private readonly FileManager _fileManager = new("jwtviewer");
+    private int _fontSize = DefaultFontSize;
 
     public string Input
     {
@@ -33,9 +37,38 @@ public class MainWindowViewModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _idToken, value);
     }
 
+    public int FontSize
+    {
+        get => _fontSize;
+        set => this.RaiseAndSetIfChanged(ref _fontSize, value);
+    }
+
+    public ICommand IncreaseFontSize { get; }
+    public ICommand DecreaseFontSize { get; }
+    public ICommand ResetFontSize { get; }
+
     public MainWindowViewModel()
     {
         _input = _fileManager.GetTextOrDefault("input.txt");
+        DecreaseFontSize = ReactiveCommand.Create(() =>
+        {
+            if (FontSize >= 4)
+            {
+                FontSize--;
+            }
+        });
+        
+        IncreaseFontSize = ReactiveCommand.Create(() =>
+        {
+            if (FontSize < 80)
+            {
+                FontSize++;
+            }
+        });
+        ResetFontSize = ReactiveCommand.Create(() =>
+        {
+            FontSize = DefaultFontSize;
+        });
     }
 
     public void Save()
@@ -69,6 +102,7 @@ public class MainWindowViewModel : ReactiveObject
                     tokenResponse.AccessToken = newValue;
                     this.RaiseAndSetIfChanged(ref _input, tokenResponse.ToPrettyJson(), nameof(Input));
                 };
+                accessToken.Title = "access_token";
                 AccessToken = accessToken;
             }
 
@@ -79,6 +113,7 @@ public class MainWindowViewModel : ReactiveObject
                     tokenResponse.IdToken = newValue;
                     this.RaiseAndSetIfChanged(ref _input, tokenResponse.ToPrettyJson(), nameof(Input));
                 };
+                idToken.Title = "id_token";
                 IdToken = idToken;
             }
         }

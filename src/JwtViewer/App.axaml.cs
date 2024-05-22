@@ -1,7 +1,6 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using JwtViewer.ViewModels;
 using JwtViewer.Views;
 
 namespace JwtViewer;
@@ -17,11 +16,7 @@ public class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var vm = new MainWindowViewModel();
-            var window = new MainWindow
-            {
-                DataContext = vm
-            };
+            var window = new MainWindow();
             desktop.MainWindow = window;
             window.Activate();
         }
