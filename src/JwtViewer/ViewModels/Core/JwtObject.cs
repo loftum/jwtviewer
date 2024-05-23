@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using JwtViewer.Conversion;
 
@@ -6,9 +7,10 @@ namespace JwtViewer.ViewModels.Core;
 
 public class JwtObject : Dictionary<string, IJwtNode>, IJwtNode
 {
-    private static readonly JsonSerializerOptions Pretty = new()
+    private static readonly JsonSerializerOptions PrettyUnsafe = new()
     {
         WriteIndented = true,
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
         Converters =
         {
             new JwtNodeConverter()
@@ -126,6 +128,7 @@ public class JwtObject : Dictionary<string, IJwtNode>, IJwtNode
         }
     }
 
-    public string ToPrettyJson() => JsonSerializer.Serialize(this, Pretty);
+    public string ToPrettyJson() => JsonSerializer.Serialize(this, PrettyUnsafe);
     public string ToJson() => JsonSerializer.Serialize(this, NonPretty);
+    
 }
