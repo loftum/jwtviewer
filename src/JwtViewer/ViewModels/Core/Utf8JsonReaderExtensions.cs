@@ -19,10 +19,10 @@ public static class Utf8JsonReaderExtensions
     
     public static int TokenEndIndex(this ref Utf8JsonReader reader)
     {
-        return (int) reader.TokenStartIndex + reader.CurrentTokenCharLength();
+        return (int) reader.TokenStartIndex + reader.TokenCharLength();
     }
     
-    public static int CurrentTokenCharLength(this ref Utf8JsonReader reader)
+    public static int TokenCharLength(this ref Utf8JsonReader reader)
     {
         return reader.TokenType switch
         {

@@ -9,11 +9,13 @@ public class Jwt : ReactiveObject
 {
     public event PropertyValueChanged<string> RawChanged;
     
+    private readonly JwtValidator _validator = JwtValidator.Instance;
     private JwtObject _header;
     private JwtObject _payload;
     private string _signature;
     private string _raw;
     private string _title;
+    private string _validationMessage;
 
     public string Raw
     {
@@ -28,7 +30,44 @@ public class Jwt : ReactiveObject
             var old = _raw;
             _raw = value;
             RawChanged?.Invoke(this, old, value);
+            Validate();
         }
+    }
+
+    public bool ValidateIssuer
+    {
+        get => _validator.Parameters.ValidateIssuer;
+        set
+        {
+            _validator.Parameters.ValidateIssuer = value;
+            Validate();
+        }
+    }
+
+    public bool ValidateLifetime
+    {
+        get => _validator.Parameters.ValidateLifetime;
+        set
+        {
+            _validator.Parameters.ValidateLifetime = value;
+            Validate();
+        }
+    }
+    
+    public bool ValidateAudience
+    {
+        get => _validator.Parameters.ValidateAudience;
+        set
+        {
+            _validator.Parameters.ValidateAudience = value;
+            Validate();
+        }
+    }
+
+    public string ValidationMessage
+    {
+        get => _validationMessage;
+        set => this.RaiseAndSetIfChanged(ref _validationMessage, value);
     }
 
     public JwtObject Header
@@ -39,27 +78,6 @@ public class Jwt : ReactiveObject
             this.RaiseAndSetIfChanged(ref _header, value);
             Raw = CalculateRaw();
         }
-    }
-
-    private string CalculateRaw()
-    {
-        var parts = new List<string>();
-        if (_header != null)
-        {
-            parts.Add(Base64.UrlEncode(_header.ToJson()));
-        }
-
-        if (_payload != null)
-        {
-            parts.Add(Base64.UrlEncode(_payload.ToJson()));
-        }
-
-        if (_signature != null)
-        {
-            parts.Add(_signature);
-        }
-
-        return string.Join('.', parts);
     }
 
     public JwtObject Payload
@@ -81,11 +99,38 @@ public class Jwt : ReactiveObject
             Raw = CalculateRaw();
         }
     }
+    
+    private string CalculateRaw()
+    {
+        var parts = new List<string>();
+        if (_header != null)
+        {
+            parts.Add(Base64.UrlEncode(_header.ToJson()));
+        }
+
+        if (_payload != null)
+        {
+            parts.Add(Base64.UrlEncode(_payload.ToJson()));
+        }
+
+        if (_signature != null)
+        {
+            parts.Add(_signature);
+        }
+
+        return string.Join('.', parts);
+    }
 
     public string Title
     {
         get => _title;
         set => this.RaiseAndSetIfChanged(ref _title, value);
+    }
+    
+    public void Validate()
+    {
+        _validator.TryValidate(_raw, out var exception);
+        ValidationMessage = exception?.Message;
     }
 
     public static bool TryParse(string raw, out Jwt jwt)
@@ -110,8 +155,10 @@ public class Jwt : ReactiveObject
             _raw = raw,
             _header = header,
             _payload = payload,
-            _signature = parts[2]
+            _signature = parts[2],
+            
         };
+        jwt.Validate();
         return true;
     }
 

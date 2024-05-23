@@ -87,6 +87,7 @@ public partial class JwtEditor : UserControl
         _payload.Text = _jwt?.Payload?.ToPrettyJson();
         _signature.Text = _jwt?.Signature;
         IsVisible = _jwt != null;
+        
     }
 
     private void TextChanged(object sender, EventArgs e)

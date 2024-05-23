@@ -11,8 +11,8 @@
         <core:Jwt/>
     </UserControl.DataContext>
     
-    <Grid RowDefinitions="Auto,Auto,Auto,Auto">
-        <TextBlock Grid.Row="0" Text="{Binding Title}" TextAlignment="Center" />
+    <StackPanel>
+        <TextBlock Text="{Binding Title}" TextAlignment="Center" />
         <avaloniaEdit:TextEditor Grid.Row="1"
                                  x:Name="Header"
                                  FontFamily="Monaco"
@@ -23,7 +23,7 @@
                                  Foreground="Red"
                                  TextChanged="TextChanged"
         />
-        <avaloniaEdit:TextEditor Grid.Row="2"
+        <avaloniaEdit:TextEditor
                                  x:Name="Payload"
                                  FontFamily="Monaco"
                                  ShowLineNumbers="false"
@@ -33,7 +33,7 @@
                                  Foreground="Magenta"
                                  TextChanged="TextChanged"
         />
-        <avaloniaEdit:TextEditor Grid.Row="3"
+        <avaloniaEdit:TextEditor
                                  x:Name="Signature"
                                  Foreground="DodgerBlue"
                                  FontFamily="Monaco"
@@ -43,6 +43,12 @@
                                  IsReadOnly="false"
                                  TextChanged="TextChanged"
         />
-        
-    </Grid>
+        <CheckBox IsChecked="{Binding ValidateIssuer}">Validate issuer</CheckBox>
+        <CheckBox IsChecked="{Binding ValidateLifetime}">Validate lifetime</CheckBox>
+        <CheckBox IsChecked="{Binding ValidateAudience}">Validate audience</CheckBox>
+        <TextBox BorderThickness="0"
+                 Text="{Binding ValidationMessage}"
+                 TextWrapping="Wrap"
+        />
+    </StackPanel>    
 </UserControl>

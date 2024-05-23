@@ -94,7 +94,13 @@ public class JwtObject : Dictionary<string, IJwtNode>, IJwtNode
             case JsonTokenType.Null:
                 return new JwtValue(null);
             case JsonTokenType.Number:
-                return new JwtValue(reader.GetInt32());
+                return reader.TryGetInt32(out var i)
+                    ? new JwtValue(i)
+                    : reader.TryGetInt64(out var l)
+                        ? new JwtValue(l)
+                        : reader.TryGetDouble(out var d)
+                            ? new JwtValue(d)
+                            : throw new InvalidOperationException($"Could not find number type for '{reader.GetString()}'");
             case JsonTokenType.String:
                 return new JwtValue(reader.GetString());
             case JsonTokenType.StartObject:
