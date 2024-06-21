@@ -92,6 +92,10 @@ public partial class JwtEditor : UserControl
 
     private void TextChanged(object sender, EventArgs e)
     {
+        if (_jwt == null)
+        {
+            return;
+        }
         if (ReferenceEquals(sender, _header))
         {
             _jwt.Header = JwtObject.TryJParseJson(_header.Text, out var o) ? o : null;
