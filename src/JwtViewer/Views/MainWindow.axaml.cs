@@ -5,10 +5,10 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using AvaloniaEdit;
 using JwtViewer.IO;
 using JwtViewer.ViewModels;
-using ReactiveUI;
 
 namespace JwtViewer.Views;
 
@@ -24,7 +24,9 @@ public partial class MainWindow : Window
     {
         AvaloniaXamlLoader.Load(this);
         _accessToken = this.Get<JwtEditor>("AccessToken");
+        _accessToken.Background = new SolidColorBrush(Colors.Blue, .05);
         _idToken = this.Get<JwtEditor>("IdToken");
+        _idToken.Background = new SolidColorBrush(Colors.DeepPink, .05);
         _idToken.IsVisible = false;
         _input = this.Get<TextEditor>("Input");
         _input.Text = _vm?.Input;
@@ -38,7 +40,6 @@ public partial class MainWindow : Window
         var fontSize = this.GetObservable(FontSizeProperty);
         _accessToken.Bind(FontSizeProperty, fontSize);
         _idToken.Bind(FontSizeProperty, fontSize);
-        
     }
 
     protected override void OnClosing(WindowClosingEventArgs e)

@@ -38,19 +38,23 @@
         />
             <GridSplitter Grid.Column="1"
                           Width="5" />
-            <Grid Grid.Column="2" ColumnDefinitions="*,*">
-                <views:JwtEditor
-                    Grid.Column="0"
-                    x:Name="AccessToken"
-                    FontSize="{Binding FontSize}"
-                    
-                    />
-                <views:JwtEditor
-                    Grid.Column="1"
-                    x:Name="IdToken"
-                    FontSize="{Binding FontSize}"
+            
+        <Grid Grid.Column="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="{Binding IdtokenWidth}"/>
+            </Grid.ColumnDefinitions>
+            <views:JwtEditor
+                Grid.Column="0"
+                x:Name="AccessToken"
+                FontSize="{Binding FontSize}"
                 />
-            </Grid>
+            <views:JwtEditor
+                Grid.Column="1"
+                x:Name="IdToken"
+                FontSize="{Binding FontSize}"
+            />
+        </Grid>
     
     </Grid>
     

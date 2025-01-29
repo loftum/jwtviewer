@@ -1,4 +1,5 @@
 using System.Windows.Input;
+using Avalonia.Controls;
 using JwtViewer.IO;
 using JwtViewer.ViewModels.Core;
 using ReactiveUI;
@@ -14,6 +15,7 @@ public class MainWindowViewModel : ReactiveObject
     private Jwt _idToken;
     private readonly FileManager _fileManager = new("jwtviewer");
     private int _fontSize = DefaultFontSize;
+    private GridLength _idtokenWidth;
 
     public string Input
     {
@@ -34,7 +36,19 @@ public class MainWindowViewModel : ReactiveObject
     public Jwt IdToken
     {
         get => _idToken;
-        set => this.RaiseAndSetIfChanged(ref _idToken, value);
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _idToken, value);
+            IdtokenWidth = value == null ? new GridLength(0) : GridLength.Star;
+        }
+    }
+
+    // Controls width of id_token editor.
+    // Set to 0 when IdToken is null, so only access token is shown
+    public GridLength IdtokenWidth
+    {
+        get => _idtokenWidth;
+        set => this.RaiseAndSetIfChanged(ref _idtokenWidth, value);
     }
 
     public int FontSize
@@ -46,6 +60,7 @@ public class MainWindowViewModel : ReactiveObject
     public ICommand IncreaseFontSize { get; }
     public ICommand DecreaseFontSize { get; }
     public ICommand ResetFontSize { get; }
+    
 
     public MainWindowViewModel()
     {
@@ -103,8 +118,8 @@ public class MainWindowViewModel : ReactiveObject
                     this.RaiseAndSetIfChanged(ref _input, tokenResponse.ToPrettyJson(), nameof(Input));
                 };
                 accessToken.Title = "access_token";
-                AccessToken = accessToken;
             }
+            AccessToken = accessToken;
 
             if (Jwt.TryParse(tokenResponse.IdToken, out var idToken))
             {
@@ -114,8 +129,8 @@ public class MainWindowViewModel : ReactiveObject
                     this.RaiseAndSetIfChanged(ref _input, tokenResponse.ToPrettyJson(), nameof(Input));
                 };
                 idToken.Title = "id_token";
-                IdToken = idToken;
             }
+            IdToken = idToken;
         }
         
         else if (value.StartsWith("ey"))

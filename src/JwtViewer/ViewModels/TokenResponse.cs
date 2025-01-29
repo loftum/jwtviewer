@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
@@ -39,24 +40,31 @@ public class TokenResponse : Dictionary<string, object>
         return null;
     }
 
+    private static readonly JsonSerializerOptions PermissiveRead = new()
+    {
+        AllowTrailingCommas = true,
+        ReadCommentHandling = JsonCommentHandling.Skip,
+        NumberHandling = JsonNumberHandling.AllowReadingFromString
+    };
+    
     public static bool TryParse(string value, [MaybeNullWhen(false)] out TokenResponse tokenResponse)
     {
         try
         {
-            tokenResponse = JsonSerializer.Deserialize<TokenResponse>(value);
+            tokenResponse = JsonSerializer.Deserialize<TokenResponse>(value, PermissiveRead);
             return true;
         }
         catch (Exception)
         {
-            tokenResponse = default;
+            tokenResponse = null;
             return false;
         }
     }
 
-
     private static readonly JsonSerializerOptions Pretty = new()
     {
-        WriteIndented = true
+        WriteIndented = true,
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
     };
     
     public string ToPrettyJson()
