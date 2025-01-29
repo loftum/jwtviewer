@@ -20,8 +20,6 @@
     <Window.Styles>
         <Style Selector="avaloniaEdit|TextEditor">
             <!-- <Setter Property="FontSize" Value="{Binding FontSize}"></Setter> -->
-            
-            
         </Style>
     </Window.Styles>
     
