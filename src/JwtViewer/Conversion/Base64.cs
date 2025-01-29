@@ -2,7 +2,7 @@ using System.Text;
 
 namespace JwtViewer.Conversion;
 
-public static class Base64
+public static partial class Base64
 {
     public static string Encode(byte[] bytes)
     {
@@ -18,18 +18,9 @@ public static class Base64
         return Encode(Encoding.UTF8.GetBytes(value));
     }
 
-    public static byte[] Decode(string base64)
-    {
-        if (base64 == null)
-        {
-            throw new ArgumentNullException(nameof(base64));
-        }
-        return Convert.FromBase64String(base64);
-    }
-
     public static string UrlEncode(string value)
     {
-        return Encode(Encoding.UTF8.GetBytes(value));
+        return UrlEncode(Encoding.UTF8.GetBytes(value));
     }
 
     public static string UrlEncode(byte[] bytes)
@@ -39,31 +30,6 @@ public static class Base64
             .Replace('+', '-')
             .Replace('/', '_')
             .ToString();
-    }
-
-    public static byte[] UrlDecode(string base64UrlFriendly)
-    {
-        if (base64UrlFriendly == null)
-        {
-            throw new ArgumentNullException(nameof(base64UrlFriendly));
-        }
-        var padLength = (4 - base64UrlFriendly.Length % 4) % 4;
-        var value = new StringBuilder(base64UrlFriendly)
-            .Replace('-', '+')
-            .Replace('_', '/')
-            .Append('=', padLength);
-        return Decode(value.ToString());
-    }
-    
-    public static string UrlDecodeToString(string base64UrlFriendly)
-    {
-        return Encoding.UTF8.GetString(UrlDecode(base64UrlFriendly));
-    }
-
-    public static string ToUtf8(string base64)
-    {
-        var bytes = Decode(base64);
-        return Encoding.UTF8.GetString(bytes);
     }
 
     public static string FromUtf8(string utf8)
@@ -194,7 +160,7 @@ public static class Base64
 
     // A-Z, a-z, 0-9 and - and _
     private static readonly byte[] Base64UrlToUtf8 =
-    {
+    [
         65, 66, 67, 68, 69, 70, 71, 72,
         73, 74, 75, 76, 77, 78, 79, 80,
         81, 82, 83, 84, 85, 86, 87, 88,
@@ -203,7 +169,20 @@ public static class Base64
         111, 112, 113, 114, 115, 116, 117, 118,
         119, 120, 121, 122, 48, 49, 50, 51,
         52, 53, 54, 55, 56, 57, 45, 95
-    };
+    ];
+
+    private static readonly Dictionary<byte, byte> Utf8ToBase64Url = Base64UrlToUtf8
+        .Select((ascii, index) => (ascii, index))
+        .ToDictionary(p => p.ascii, p => (byte)p.index);
+
+    private static byte ToBase64Url(byte ascii)
+    {
+        if (!Utf8ToBase64Url.TryGetValue(ascii, out var base64Url))
+        {
+            throw new IndexOutOfRangeException($"{ascii} is invalid");
+        }
+        return base64Url;
+    }
     
     private static byte ToUtf8Byte(byte base64)
     {

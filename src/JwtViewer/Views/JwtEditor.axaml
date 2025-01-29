@@ -1,0 +1,54 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:core="clr-namespace:JwtViewer.ViewModels.Core"
+                  xmlns:avaloniaEdit="https://github.com/avaloniaui/avaloniaedit"
+                  mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="300"
+                  x:Class="JwtViewer.Views.JwtEditor"
+                  >
+    <UserControl.DataContext>
+        <core:Jwt/>
+    </UserControl.DataContext>
+    
+    <StackPanel>
+        <TextBlock Text="{Binding Title}" TextAlignment="Center" />
+        <avaloniaEdit:TextEditor Grid.Row="1"
+                                 x:Name="Header"
+                                 FontFamily="Monaco"
+                                 ShowLineNumbers="false"
+                                 WordWrap="true"
+                                 IsEnabled="true"
+                                 IsReadOnly="false"
+                                 Foreground="Red"
+                                 TextChanged="TextChanged"
+        />
+        <avaloniaEdit:TextEditor
+                                 x:Name="Payload"
+                                 FontFamily="Monaco"
+                                 ShowLineNumbers="false"
+                                 WordWrap="true"
+                                 IsEnabled="true"
+                                 IsReadOnly="false"
+                                 Foreground="Magenta"
+                                 TextChanged="TextChanged"
+        />
+        <avaloniaEdit:TextEditor
+                                 x:Name="Signature"
+                                 Foreground="DodgerBlue"
+                                 FontFamily="Monaco"
+                                 ShowLineNumbers="false"
+                                 WordWrap="true"
+                                 IsEnabled="true"
+                                 IsReadOnly="false"
+                                 TextChanged="TextChanged"
+        />
+        <CheckBox IsChecked="{Binding ValidateIssuer}">Validate issuer</CheckBox>
+        <CheckBox IsChecked="{Binding ValidateLifetime}">Validate lifetime</CheckBox>
+        <CheckBox IsChecked="{Binding ValidateAudience}">Validate audience</CheckBox>
+        <TextBox BorderThickness="0"
+                 Text="{Binding ValidationMessage}"
+                 TextWrapping="Wrap"
+        />
+    </StackPanel>    
+</UserControl>

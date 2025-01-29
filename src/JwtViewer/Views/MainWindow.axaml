@@ -4,51 +4,57 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:JwtViewer.ViewModels"
         xmlns:avaloniaEdit="https://github.com/avaloniaui/avaloniaedit"
+        xmlns:views="clr-namespace:JwtViewer.Views"
         mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="300"
         x:Class="JwtViewer.Views.MainWindow"
         Title="Jwt viewer"
         Icon="/Assets/icon.ico"
-        Width="1000" Height="800">
+        Width="1000" Height="800"
+        FontSize="{Binding FontSize}"
+        >
+    
     <Window.DataContext>
         <viewModels:MainWindowViewModel/>
     </Window.DataContext>
     
+    <Window.Styles>
+        <Style Selector="avaloniaEdit|TextEditor">
+            <!-- <Setter Property="FontSize" Value="{Binding FontSize}"></Setter> -->
+        </Style>
+    </Window.Styles>
+    
     <Grid ColumnDefinitions="*,5,*">
-            <TextBox Grid.Column="0"
-                     Name="Input"
-                     FontFamily="Courier New"
-                     Text="{Binding Input,Mode=OneWayToSource}"
-                     AcceptsReturn="true"
-                     AcceptsTab="true"
-                     IsReadOnly="false"
-                     TextWrapping="Wrap"
-                     />
+        
+        <avaloniaEdit:TextEditor Grid.Column="0"
+                                 x:Name="Input"
+                                 FontFamily="Monaco"
+                                 ShowLineNumbers="true"
+                                 TextChanged="InputChanged"
+                                 WordWrap="false"
+                                 HorizontalScrollBarVisibility="Disabled"
+                                 VerticalScrollBarVisibility="Disabled"
+                                 IsEnabled="true"
+                                 IsReadOnly="false"
+        />
             <GridSplitter Grid.Column="1"
                           Width="5" />
-            <Grid Grid.Column="2" ColumnDefinitions="*,*">
-                <avaloniaEdit:TextEditor Grid.Column="0"
-                        x:Name="AccessToken"
-                        BorderThickness="2"
-                        FontFamily="Monaco"
-                        SyntaxHighlighting="json"
-                        ShowLineNumbers="true"
-                        HorizontalScrollBarVisibility="Auto"
-                        VerticalScrollBarVisibility="Auto"
-                        IsReadOnly="False"
-                        IsEnabled="true"
+            
+        <Grid Grid.Column="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="{Binding IdtokenWidth}"/>
+            </Grid.ColumnDefinitions>
+            <views:JwtEditor
+                Grid.Column="0"
+                x:Name="AccessToken"
+                FontSize="{Binding FontSize}"
                 />
-                <avaloniaEdit:TextEditor Grid.Column="1"
-                    x:Name="IdToken"
-                    BorderThickness="2"
-                    FontFamily="Monaco"
-                    SyntaxHighlighting="json"
-                    ShowLineNumbers="true"
-                    HorizontalScrollBarVisibility="Auto"
-                    VerticalScrollBarVisibility="Auto"
-                    IsReadOnly="False"
-                    IsEnabled="true"
-                />
-            </Grid>
+            <views:JwtEditor
+                Grid.Column="1"
+                x:Name="IdToken"
+                FontSize="{Binding FontSize}"
+            />
+        </Grid>
     
     </Grid>
     
